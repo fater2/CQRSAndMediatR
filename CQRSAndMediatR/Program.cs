@@ -1,3 +1,6 @@
+using CQRSAndMediatR.Persistence;
+using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,9 @@ builder.Services.AddControllers();
 
 // register the dbcontect
 builder.Services.AddDbContext<AppDbContext>();
+
+// Registering MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 var app = builder.Build();
 
