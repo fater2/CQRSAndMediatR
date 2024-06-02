@@ -35,6 +35,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 #region Minimal API Endpoints
+// ISender is to send the commands/queries to its registered handlers.
 app.MapGet("/products/{id:guid}", async (Guid id, ISender mediatr) =>
 {
 	var product = await mediatr.Send(new GetProductQuery(id));
@@ -42,7 +43,7 @@ app.MapGet("/products/{id:guid}", async (Guid id, ISender mediatr) =>
 	return Results.Ok(product);
 });
 
-app.MapGet("/products", async (ISender mediatr) =>
+app.MapGet("/products", async (ISender mediatr) => // or use IMediator instead of ISender, but the ISender interface is far more lightweight
 {
 	var products = await mediatr.Send(new ListProductQuery());
 	return Results.Ok(products);
