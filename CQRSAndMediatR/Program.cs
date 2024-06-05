@@ -25,7 +25,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Get
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
 
 // 2.1/2.2 global exception handler 
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddExceptionHandler<ProductNotFoundExceptionHandler>();// this will come first
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();// this will come second
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
