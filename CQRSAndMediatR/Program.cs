@@ -1,3 +1,4 @@
+using CQRSAndMediatR.Exceptions;
 using CQRSAndMediatR.Features.Products.Commands.Create;
 using CQRSAndMediatR.Features.Products.Commands.Delete;
 using CQRSAndMediatR.Features.Products.Queries.Get;
@@ -35,13 +36,19 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// add global exceptions handler middleware
+// note to comment UseExceptionHandler
+app.UseMiddleware<ErrorHandlerMiddleware>();
+
+
 #region Minimal API Endpoints
 // ISender is to send the commands/queries to its registered handlers.
 app.MapGet("/products/{id:guid}", async (Guid id, ISender mediatr) =>
 {
 	var product = await mediatr.Send(new GetProductQuery(id));
-	if (product == null) return Results.NotFound();
-	return Results.Ok(product);
+	return product == null 
+		? throw new ProductNotFoundException(id) 
+		: Results.Ok(product);
 });
 
 app.MapGet("/products", async (ISender mediatr) => // or use IMediator instead of ISender, but the ISender interface is far more lightweight
