@@ -1,4 +1,5 @@
 using CQRSAndMediatR.Exceptions;
+using CQRSAndMediatR.Exceptions.AnotherExceptionsHandler;
 using CQRSAndMediatR.Features.Products.Commands.Create;
 using CQRSAndMediatR.Features.Products.Commands.Delete;
 using CQRSAndMediatR.Features.Products.Queries.Get;
@@ -23,7 +24,12 @@ builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
 
+// 2.1/2.2 global exception handler 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -36,10 +42,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// 1 global exception handler 
 // add global exceptions handler middleware
 // note to comment UseExceptionHandler
-app.UseMiddleware<ErrorHandlerMiddleware>();
+//app.UseMiddleware<ErrorHandlerMiddleware>();
 
+// 2.1/2.2 global exception handler 
+app.UseExceptionHandler();
 
 #region Minimal API Endpoints
 // ISender is to send the commands/queries to its registered handlers.
